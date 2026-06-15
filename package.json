@@ -1,0 +1,58 @@
+{
+  "name": "dpdpstack-js-sdk",
+  "version": "0.1.0",
+  "description": "Official JavaScript/TypeScript SDK for the DPDPStack API (getdpdp.net) — DPDP Act consent, erasure, audit, DSR/breach workflows, and verifiable Certificates of Erasure.",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "unpkg": "./dist/dpdpstack.global.js",
+  "jsdelivr": "./dist/dpdpstack.global.js",
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "sideEffects": false,
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "npm run build"
+  },
+  "keywords": [
+    "dpdp",
+    "dpdp-act",
+    "consent",
+    "privacy",
+    "india",
+    "erasure",
+    "compliance",
+    "audit",
+    "getdpdp",
+    "dpdpstack"
+  ],
+  "license": "MIT",
+  "author": "DPDPStack",
+  "homepage": "https://getdpdp.net/docs",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/getdpdp/dpdpstack-js-sdk.git"
+  },
+  "bugs": {
+    "url": "https://github.com/getdpdp/dpdpstack-js-sdk/issues"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "devDependencies": {
+    "tsup": "^8.3.5",
+    "typescript": "^5.7.2"
+  }
+}

@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>DPDPStack consent widget</title>
+  </head>
+  <body style="font-family: system-ui, sans-serif; padding: 40px">
+    <h1>Consent widget demo</h1>
+    <div id="consent"></div>
+
+    <!-- CDN / <script> drop-in. Exposes window.dpdpstack. -->
+    <script src="https://cdn.jsdelivr.net/npm/dpdpstack-js-sdk/dist/dpdpstack.global.js"></script>
+    <script>
+      // Publishable key only (dpdp_pk_…). In production, set an origin allowlist
+      // on the key and serve purposes/consent via your own /api/v1 proxy.
+      const dpdp = new dpdpstack.DPDPStack({
+        apiBase: "/api/v1",
+        apiKey: "dpdp_pk_REPLACE_ME",
+      });
+
+      dpdpstack.mountConsentWidget("#consent", {
+        client: dpdp,
+        principalRef: "user_123", // your opaque user id — never PII
+        locale: "en",
+        // purposes are fetched via the API when omitted; or pass them inline:
+        // purposes: [{ code: "marketing", name: "Marketing", description: "…", translations: {}, active: true }],
+        onSave: (receipts) => console.log("consent receipts:", receipts),
+      });
+    </script>
+  </body>
+</html>
