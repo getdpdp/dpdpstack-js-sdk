@@ -1,6 +1,6 @@
 {
   "name": "dpdpstack-js-sdk",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Official JavaScript/TypeScript SDK for the DPDPStack API (getdpdp.net) — DPDP Act consent, erasure, audit, DSR/breach workflows, and verifiable Certificates of Erasure.",
   "type": "module",
   "main": "./dist/index.cjs",

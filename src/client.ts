@@ -1,7 +1,10 @@
 import type {
   ActivityInput,
   ActivityResult,
+  AuditCheckpoint,
+  AuditCheckpointInput,
   AuditLog,
+  AuditVerifyResult,
   Breach,
   BreachActionInput,
   BreachListQuery,
@@ -34,9 +37,11 @@ import type {
   IssuedCertificate,
   Purpose,
   PurposeInput,
+  Readiness,
   RetentionPolicy,
   RetentionPolicyInput,
   RetentionRunResult,
+  Stats,
   Target,
   TargetCreateInput,
   TargetUpdateInput,
@@ -213,6 +218,30 @@ export class DPDPStack {
     return this.request("GET", "/audit", { query });
   }
 
+  /** Verify the chain and report where (if anywhere) it breaks, plus the checkpoint
+   *  it anchored to for a pruned/retained chain. Requires a secret key. */
+  verifyAuditChain(): Promise<AuditVerifyResult> {
+    return this.request("GET", "/audit/verify");
+  }
+
+  /** Snapshot the chain into an immutable checkpoint so it can be pruned under
+   *  retention and still verify. Requires a secret key. */
+  createAuditCheckpoint(input: AuditCheckpointInput = {}): Promise<AuditCheckpoint> {
+    return this.request("POST", "/audit/checkpoint", { body: input });
+  }
+
+  // --- Readiness & stats --------------------------------------------------
+
+  /** A graded DPDP retention-readiness score over your configured policies. Requires a secret key. */
+  readiness(): Promise<Readiness> {
+    return this.request("GET", "/readiness");
+  }
+
+  /** Aggregate dashboard counts (records, audit entries, open DSRs/breaches, certificates). Requires a secret key. */
+  stats(): Promise<Stats> {
+    return this.request("GET", "/stats");
+  }
+
   // --- Retention ----------------------------------------------------------
 
   readonly retention = {
@@ -232,6 +261,10 @@ export class DPDPStack {
     /** Issue a counter-signed Certificate of Erasure for a principal. Requires a secret key. */
     issue: (input: IssueCertificateInput): Promise<IssuedCertificate> =>
       this.request("POST", "/certificate", { body: input }),
+    /** Issue a counter-signed Certificate of Consent (what was consented to + the
+     *  notice fingerprint) for a principal. Requires a secret key. */
+    issueConsent: (input: IssueCertificateInput): Promise<IssuedCertificate> =>
+      this.request("POST", "/consent/certificate", { body: input }),
     /** Verify a Certificate of Erasure (JWT) against the public key. Public — no key needed. */
     verify: (certificateJwt: string): Promise<CertificateVerifyResult> =>
       this.request("POST", "/certificate/verify", { body: { certificate_jwt: certificateJwt } }),

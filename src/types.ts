@@ -134,6 +134,35 @@ export interface AuditLog {
   entries: AuditEntry[];
 }
 
+/** Richer verification: whether the chain is intact, where it breaks, and which
+ *  checkpoint it anchored to (for a pruned/retained chain). */
+export interface AuditVerifyResult {
+  ok: boolean;
+  checked: number;
+  count: number;
+  first_error_sequence: Nullable<number>;
+  anchored_at: Nullable<number>;
+  message?: string;
+}
+
+export interface AuditCheckpointInput {
+  /** Snapshot up to this sequence (default: the whole current chain). */
+  through_sequence?: number;
+}
+
+/** An immutable checkpoint so the chain can be pruned under retention and still verify. */
+export interface AuditCheckpoint {
+  from_sequence: number;
+  to_sequence: number;
+  anchor_prev_hash: string;
+  to_hash: string;
+  count: number;
+  from_time: string;
+  to_time: string;
+  checkpoint_hash: string;
+  created_at: Nullable<Timestamp>;
+}
+
 // --- Retention ------------------------------------------------------------
 
 export type RetentionTrigger = "consent_withdrawn" | "inactivity" | "fixed_period" | string;
@@ -174,6 +203,31 @@ export interface ActivityInput {
 export interface ActivityResult {
   updated: number;
   last_activity_at: Timestamp;
+}
+
+// --- Readiness & stats ----------------------------------------------------
+
+export type ReadinessTier = "exemplary" | "strong" | "moderate" | "at_risk" | "critical";
+
+/** A graded DPDP retention-readiness score over the org's configured policies. */
+export interface Readiness {
+  score: number;
+  grade: string;
+  tier: ReadinessTier;
+  policies_scored: number;
+  findings: { error: number; warning: number; info: number };
+  by_policy: Array<{ purpose: string; score: number; findings: string[] }>;
+  summary: string;
+}
+
+/** Aggregate dashboard counts for the organization. */
+export interface Stats {
+  chain_verified: boolean;
+  audit_entries: number;
+  records: { total: number; granted: number; withdrawn: number; expired: number };
+  dsr_open: number;
+  breaches_open: number;
+  certificates: { total: number; active: number };
 }
 
 // --- Certificates ---------------------------------------------------------

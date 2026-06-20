@@ -5,7 +5,7 @@ consent, erasure, audit, DSR/breach workflows, and verifiable Certificates of
 Erasure. Zero runtime dependencies; works in Node 18+ and the browser.
 
 > This is the SDK for the **hosted platform** API. The open-source erasure
-> engine is the Python package [`dpdpstack`](https://pypi.org/project/dpdpstack/).
+> engine is the Python package [`dpdpstack`](https://pypi.org/project/dpdpstack-python-sdk/).
 
 ## Install
 
@@ -95,9 +95,9 @@ The SDK mirrors the HTTP API; field names match the wire format exactly.
 |---|---|
 | **Consent** | `listPurposes()` · `createPurpose()` · `grantConsent()` · `withdrawConsent()` · `consentStatus(ref)` · `listConsentRecords()` · `recordActivity()` |
 | **Erasure** | `requestErasure()` · `confirmErasure(token)` |
-| **Audit** | `getAuditLog({ principal_ref? })` |
-| **Retention** | `retention.list()` · `retention.upsert()` · `retention.run({ dry_run? })` |
-| **Certificates** | `certificates.issue()` · `certificates.verify(jwt)` · `certificates.publicKey()` · `certificates.registry(fp)` · `certificates.issueFromEvidence()` |
+| **Audit** | `getAuditLog({ principal_ref? })` · `verifyAuditChain()` · `createAuditCheckpoint({ through_sequence? })` |
+| **Retention** | `retention.list()` · `retention.upsert()` · `retention.run({ dry_run? })` · `readiness()` · `stats()` |
+| **Certificates** | `certificates.issue()` · `certificates.issueConsent()` · `certificates.verify(jwt)` · `certificates.publicKey()` · `certificates.registry(fp)` · `certificates.issueFromEvidence()` |
 | **Evidence** | `evidence.ingest()` · `evidence.list({ source?, subject? })` |
 | **DSR** | `dsr.list()` · `dsr.create()` · `dsr.get(id)` · `dsr.act(id, { action })` |
 | **Breaches** | `breaches.list()` · `breaches.report()` · `breaches.get(id)` · `breaches.act(id, { action })` · `breaches.notifications(id)` |
@@ -114,28 +114,6 @@ npm install
 npm run build      # → dist/ (ESM, CJS, IIFE, .d.ts)
 npm run typecheck
 ```
-
-## Releasing (CI/CD)
-
-Publishing is automated by GitHub Actions ([.github/workflows/publish.yml](.github/workflows/publish.yml)).
-
-**One-time setup:** add an npm **automation** token as a repo secret named `NPM_TOKEN`
-(npm → Access Tokens → Generate → *Automation* → copy → GitHub repo → Settings →
-Secrets and variables → Actions → New repository secret).
-
-**To cut a release:**
-
-```bash
-npm version patch        # bump package.json + create tag vX.Y.Z (minor/major as needed)
-git push --follow-tags   # pushing the tag triggers the publish workflow
-```
-
-The workflow runs typecheck + build, checks the tag matches `package.json`, then
-publishes to npm with provenance. The CDN (jsDelivr / unpkg) updates automatically.
-`.github/workflows/ci.yml` runs typecheck + build on every push/PR.
-
-> Provenance needs a **public** repo. On a private repo, remove `--provenance`
-> from the publish step.
 
 ## License
 
